@@ -2,41 +2,121 @@
 <html>
 <head>
   <title>Rates Checker</title>
+  <style>
+    /* Basic styling for better appearance and readability */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f7f9fc;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 30px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    label {
+      display: block;
+      margin-bottom: 12px;
+      font-weight: bold;
+      color: #444;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 4px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      width: 100%;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    pre {
+      background: #f0f0f0;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+  </style>
 </head>
 <body>
-  <h2>Check Unit Rates</h2>
-  <form id="rateForm">
-    <label>Unit Name: <input name="unitName" required /></label><br/>
-    <label>Arrival (dd/mm/yyyy): <input name="arrival" required /></label><br/>
-    <label>Departure (dd/mm/yyyy): <input name="departure" required /></label><br/>
-    <label>Occupants: <input name="occupants" type="number" required /></label><br/>
-    <label>Ages (comma-separated): <input name="ages" required /></label><br/>
-    <button type="submit">Check</button>
-  </form>
+  <div class="container">
+    <h2>Check Unit Rates</h2>
+    <form id="rateForm">
+      <!-- Form fields -->
+      <label>Unit Name:
+        <input name="unitName" required />
+      </label>
+      <label>Arrival (dd/mm/yyyy):
+        <input name="arrival" required />
+      </label>
+      <label>Departure (dd/mm/yyyy):
+        <input name="departure" required />
+      </label>
+      <label>Occupants:
+        <input name="occupants" type="number" required />
+      </label>
+      <label>Ages (comma-separated):
+        <input name="ages" required />
+      </label>
+      <button type="submit">Check</button>
+    </form>
 
-  <pre id="output"></pre>
+    <!-- Response will be displayed here -->
+    <pre id="output"></pre>
+  </div>
 
   <script>
+    // Handle form submission
     const form = document.getElementById('rateForm');
     const output = document.getElementById('output');
 
     form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+      e.preventDefault(); // Prevent page reload
+
+      // Collect form data
       const data = new FormData(form);
       const payload = {
         "Unit Name": data.get("unitName"),
         "Arrival": data.get("arrival"),
         "Departure": data.get("departure"),
         "Occupants": parseInt(data.get("occupants")),
-        "Ages": data.get("ages").split(',').map(Number)
+        "Ages": data.get("ages").split(',').map(age => parseInt(age.trim()))
       };
-      const res = await fetch("../backend/api.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      const json = await res.json();
-      output.textContent = JSON.stringify(json, null, 2);
+
+      try {
+        // Send JSON payload to the PHP backend
+        const res = await fetch("/api.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        // Display result in <pre> block
+        const json = await res.json();
+        output.textContent = JSON.stringify(json, null, 2);
+      } catch (error) {
+        output.textContent = "Error contacting the API: " + error;
+      }
     });
   </script>
 </body>
