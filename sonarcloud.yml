@@ -16,7 +16,7 @@ jobs:
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v1.8
         with:
-          organization: "<your-org>"
-          projectKey: "<your-project-key>"
+          organization: "amili-it"
+          projectKey: "AMili-IT_rates-api-assignment"
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
