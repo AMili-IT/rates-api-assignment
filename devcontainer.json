@@ -1,0 +1,9 @@
+{
+  "name": "PHP Dev Container",
+  "image": "mcr.microsoft.com/devcontainers/php:8.1",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {},
+    "ghcr.io/devcontainers-contrib/features/composer:2": {}
+  },
+  "postCreateCommand": "composer install || true"
+}
